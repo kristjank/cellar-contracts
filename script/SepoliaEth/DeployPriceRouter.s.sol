@@ -4,6 +4,8 @@ pragma solidity 0.8.21;
 import {Deployer} from "src/Deployer.sol";
 import {Registry} from "src/Registry.sol";
 import {PriceRouter} from "src/modules/price-router/PriceRouter.sol";
+import {SepoliaAddresses} from "test/resources/SepoliaAddresses.sol";
+import {SepoliaContractDeploymentNames} from "test/resources/SepoliaContractDeploymentNames.sol";
 
 import {PositionIds} from "resources/PositionIds.sol";
 import {Math} from "src/utils/Math.sol";
@@ -16,19 +18,17 @@ import "forge-std/StdJson.sol";
  *  source .env && forge script script/Arbitrum/production/DeployPriceRouter.s.sol:DeployPriceRouterScript --evm-version london --with-gas-price 100000000 --slow --broadcast --etherscan-api-key $ARBISCAN_KEY --verify
  * @dev Optionally can change `--with-gas-price` to something more reasonable
  */
-contract DeployPriceRouterScript is Script {
+contract DeployPriceRouterScript is Script, SepoliaAddresses, SepoliaContractDeploymentNames {
     using Math for uint256;
     using stdJson for string;
 
     uint256 public privateKey;
-    Deployer public deployer = Deployer(vm.envAddress("SEPOLIA_DEPLOYER_ADDRESS"));
+    Deployer public deployer = Deployer(deployerAddress);
     Registry public registry;
-    PriceRouter public priceRouter;
 
     uint8 public constant CHAINLINK_DERIVATIVE = 1;
     uint8 public constant TWAP_DERIVATIVE = 2;
     uint8 public constant EXTENSION_DERIVATIVE = 3;
-    ERC20 public WETH = ERC20(0xD0dF82dE051244f04BfF3A8bB1f62E1cD39eED92);
 
     function setUp() external {
         privateKey = vm.envUint("PRIVATE_KEY");
@@ -41,9 +41,11 @@ contract DeployPriceRouterScript is Script {
         vm.startBroadcast(privateKey);
 
         // Deploy Price Router
+        PriceRouter priceRouter;
+
         creationCode = type(PriceRouter).creationCode;
         constructorArgs = abi.encode(vm.envAddress("SOMM_DEVELOPER_ADDRESS"), registry, WETH);
-        priceRouter = PriceRouter(deployer.deployContract("THE-REGISTER-ROUTER", creationCode, constructorArgs, 0));
+        priceRouter = PriceRouter(deployer.deployContract(priceRouterName, creationCode, constructorArgs, 0));
 
         // Update price router in registry.
         registry.setAddress(2, address(priceRouter));

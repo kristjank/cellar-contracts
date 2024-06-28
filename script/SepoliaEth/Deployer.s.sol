@@ -2,6 +2,8 @@ pragma solidity 0.8.21;
 
 import {Deployer} from "src/Deployer.sol";
 import {Registry} from "src/Registry.sol";
+import {SepoliaAddresses} from "test/resources/SepoliaAddresses.sol";
+import {SepoliaContractDeploymentNames} from "test/resources/SepoliaContractDeploymentNames.sol";
 
 import "forge-std/Script.sol";
 
@@ -11,7 +13,7 @@ import "forge-std/Script.sol";
  *      `source .env && forge script script/testnet/Sepolia.s.sol:DeployerScript --rpc-url $TESTNET_RPC_URL  --private-key $DEPLOYER_KEY —optimize —optimizer-runs 200 --with-gas-price 25000000000 --verify --etherscan-api-key $ETHERSCAN_KEY --slow --broadcast`
  * @dev Optionally can change `--with-gas-price` to something more reasonable
  */
-contract DeployerScript is Script {
+contract DeployerScript is Script, SepoliaAddresses, SepoliaContractDeploymentNames {
     Deployer public deployer;
     Registry public registry;
     uint256 deployerPrivateKey;
@@ -40,7 +42,7 @@ contract DeployerScript is Script {
 
         creationCode = type(Registry).creationCode;
         constructorArgs = abi.encode(sommDev, sommDev, address(0), address(0));
-        registry = Registry(deployer.deployContract("THE-REGISTER", creationCode, constructorArgs, 0));
+        registry = Registry(deployer.deployContract(registryName, creationCode, constructorArgs, 0));
 
         vm.stopBroadcast();
     }
