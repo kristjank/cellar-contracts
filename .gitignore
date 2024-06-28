@@ -6,8 +6,9 @@ gnosisTxs/
 
 # Environment variables!
 .env
+.env.*
 .env.prod
-
+.*.env
 # JS
 node_modules/
 

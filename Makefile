@@ -22,3 +22,6 @@ deploy-sepolia:; forge script -vv script/SepoliaEth/Deployer.s.sol:DeployerScrip
 
 # price router setup
 deploy-sepolia-price-router:; forge script -vv script/SepoliaEth/DeployPriceRouter.s.sol:DeployPriceRouterScript --rpc-url ${SEPOLIA_RPC_URL} --private-key ${DEPLOY_KEY} —optimize —optimizer-runs 200 --with-gas-price 70000000000 --verify --etherscan-api-key ${ETHERSCAN_KEY} --slow --broadcast
+
+# setup architecture
+sepolia-setup-architecture:; forge script -vv script/SepoliaEth/SetUpArchitecture.s.sol:SetUpArchitectureScript --rpc-url ${SEPOLIA_RPC_URL} --private-key ${DEPLOY_KEY} —optimize —optimizer-runs 200 --with-gas-price 70000000000 --verify --etherscan-api-key ${ETHERSCAN_KEY} --slow --broadcast

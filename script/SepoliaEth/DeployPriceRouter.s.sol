@@ -4,8 +4,8 @@ pragma solidity 0.8.21;
 import {Deployer} from "src/Deployer.sol";
 import {Registry} from "src/Registry.sol";
 import {PriceRouter} from "src/modules/price-router/PriceRouter.sol";
-import {SepoliaAddresses} from "test/resources/SepoliaAddresses.sol";
-import {SepoliaContractDeploymentNames} from "test/resources/SepoliaContractDeploymentNames.sol";
+import {SepoliaAddresses} from "resources/SepoliaAddresses.sol";
+import {SepoliaContractDeploymentNames} from "resources/SepoliaContractDeploymentNames.sol";
 
 import {PositionIds} from "resources/PositionIds.sol";
 import {Math} from "src/utils/Math.sol";
@@ -15,8 +15,9 @@ import "forge-std/Script.sol";
 import "forge-std/StdJson.sol";
 
 /**
- *  source .env && forge script script/Arbitrum/production/DeployPriceRouter.s.sol:DeployPriceRouterScript --evm-version london --with-gas-price 100000000 --slow --broadcast --etherscan-api-key $ARBISCAN_KEY --verify
- * @dev Optionally can change `--with-gas-price` to something more reasonable
+ * @dev Run
+ *      `make deploy-sepolia-price-router`  // see Makefile
+ *      Optionally can change `--with-gas-price` to something more reasonable
  */
 contract DeployPriceRouterScript is Script, SepoliaAddresses, SepoliaContractDeploymentNames {
     using Math for uint256;
@@ -32,7 +33,7 @@ contract DeployPriceRouterScript is Script, SepoliaAddresses, SepoliaContractDep
 
     function setUp() external {
         privateKey = vm.envUint("PRIVATE_KEY");
-        registry = Registry(deployer.getAddress("THE-REGISTER"));
+        registry = Registry(deployer.getAddress(registryName));
     }
 
     function run() external {
