@@ -110,15 +110,15 @@ contract SetUpArchitectureScript is Script, SepoliaAddresses, SepoliaContractDep
         registry.trustPosition(ERC20_DAI_POSITION, address(erc20Adaptor), abi.encode(DAI));
         registry.trustPosition(ERC20_WETH_POSITION, address(erc20Adaptor), abi.encode(WETH));
 
-        // Add Aave V3 A token positions
-        registry.trustPosition(AAVE_V3_LOW_HF_A_USDC_POSITION, address(aaveV3ATokenAdaptor), abi.encode(aV3USDC));
-        registry.trustPosition(AAVE_V3_LOW_HF_A_DAI_POSITION, address(aaveV3ATokenAdaptor), abi.encode(aV3DAI));
-        registry.trustPosition(AAVE_V3_LOW_HF_A_WETH_POSITION, address(aaveV3ATokenAdaptor), abi.encode(aV3WETH));
+        // // Add Aave V3 A token positions
+        // registry.trustPosition(AAVE_V3_LOW_HF_A_USDC_POSITION, address(aaveV3ATokenAdaptor), abi.encode(aV3USDC));
+        // registry.trustPosition(AAVE_V3_LOW_HF_A_DAI_POSITION, address(aaveV3ATokenAdaptor), abi.encode(aV3DAI));
+        // registry.trustPosition(AAVE_V3_LOW_HF_A_WETH_POSITION, address(aaveV3ATokenAdaptor), abi.encode(aV3WETH));
 
-        // Add Aave V3 debt token positions
-        registry.trustPosition(AAVE_V3_LOW_HF_DEBT_USDC_POSITION, address(aaveV3DebtTokenAdaptor), abi.encode(dV3USDC));
-        registry.trustPosition(AAVE_V3_LOW_HF_DEBT_DAI_POSITION, address(aaveV3DebtTokenAdaptor), abi.encode(dV3DAI));
-        registry.trustPosition(AAVE_V3_LOW_HF_DEBT_WETH_POSITION, address(aaveV3DebtTokenAdaptor), abi.encode(dV3WETH));
+        // // Add Aave V3 debt token positions
+        // registry.trustPosition(AAVE_V3_LOW_HF_DEBT_USDC_POSITION, address(aaveV3DebtTokenAdaptor), abi.encode(dV3USDC));
+        // registry.trustPosition(AAVE_V3_LOW_HF_DEBT_DAI_POSITION, address(aaveV3DebtTokenAdaptor), abi.encode(dV3DAI));
+        // registry.trustPosition(AAVE_V3_LOW_HF_DEBT_WETH_POSITION, address(aaveV3DebtTokenAdaptor), abi.encode(dV3WETH));
 
         // Add Uniswap positions
         registry.trustPosition(
