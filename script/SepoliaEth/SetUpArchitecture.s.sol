@@ -110,7 +110,7 @@ contract SetUpArchitectureScript is Script, SepoliaAddresses, SepoliaContractDep
         registry.trustPosition(ERC20_DAI_POSITION, address(erc20Adaptor), abi.encode(DAI));
         registry.trustPosition(ERC20_WETH_POSITION, address(erc20Adaptor), abi.encode(WETH));
 
-        // Add Aave V3 a token positions
+        // Add Aave V3 A token positions
         registry.trustPosition(AAVE_V3_LOW_HF_A_USDC_POSITION, address(aaveV3ATokenAdaptor), abi.encode(aV3USDC));
         registry.trustPosition(AAVE_V3_LOW_HF_A_DAI_POSITION, address(aaveV3ATokenAdaptor), abi.encode(aV3DAI));
         registry.trustPosition(AAVE_V3_LOW_HF_A_WETH_POSITION, address(aaveV3ATokenAdaptor), abi.encode(aV3WETH));

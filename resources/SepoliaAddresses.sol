@@ -33,7 +33,7 @@ contract SepoliaAddresses {
     address public DAI_USD_FEED = 0x14866185B1962B63C3Ea9E03Bc1da838bab34C19;
 
     // Aave
-    address public aaveV3Pool = 0x012bAC54348C0E635dCAc9D5FB99f06F24136C9A;
+    address public aaveV3Pool = 0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951;
     address public aaveV3Oracle = 0x2da88497588bf89281816106C7259e31AF45a663;
 
     // Uniswap V3
