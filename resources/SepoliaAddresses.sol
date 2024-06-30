@@ -5,12 +5,9 @@ import {ERC20} from "@solmate/tokens/ERC20.sol";
 
 contract SepoliaAddresses {
     // Sommelier
-    address public deployerAddress = 0xd3bFa88554B1F9AA01134B8628F34Ffc975C455B;
-    address public registryAddress = 0x15a515B6840e96014502e1CAcCad4Dca2E2491Ad;
-
-    address public dev0Address = 0x2eA1493C9ABEb3cA53430fD8fAa3db2E98d38020;
-
-    address public priceRouterAddress = 0x5035CA57CDD417949643a7fb375616C1134C9cff;
+    address public DEPLOYER_ADDRESS = 0x0629d76e47A4A8BC2A50225F5FaFDccd90E1204F;
+    //
+    address public DEV0_ADDRESS = 0x607FEBE27E6573A00D35e3EDc9b24936E987d39b;
 
     // ERC20s
     ERC20 public WETH = ERC20(0xD0dF82dE051244f04BfF3A8bB1f62E1cD39eED92);

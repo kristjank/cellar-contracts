@@ -29,7 +29,7 @@ mainnet = {key = "${ETHERSCAN_KEY}"}
 sepolia = {key = "${ETHERSCAN_KEY}", url = "https://api-sepolia.etherscan.io/api"}
 
 [fmt]
-FOUNDRY_FMT_LINE_LENGTH = 120
+FOUNDRY_FMT_LINE_LENGTH = 160
 FOUNDRY_FMT_TAB_WIDTH = 4
 FOUNDRY_FMT_BRACKET_SPACING = true
 FOUNDRY_FMT_INT_TYPES = "long"
