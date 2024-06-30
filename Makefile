@@ -41,4 +41,5 @@ localhost-setup-architecture:; forge script -vv script/Tulipa/SetUpArchitecture.
 
 # cellar setups
 localhost-cellar-with-aavev3-flashloans:; forge script script/Tulipa/SetupCellarWithAaveV3FlashLoans.s.sol:SetupCellarWithAaveV3FlashLoansScript --rpc-url ${LOCAL_HOST} --private-key ${DEPLOY_KEY} —optimize —optimizer-runs 200 --with-gas-price 70000000000 --slow --broadcast
+
 localhost-cellar-with-native-support:; forge script -vv script/Tulipa/SetupCellarNativeSupport.s.sol:SetupCellarNativeSupportScript --rpc-url ${LOCAL_HOST}  --private-key ${DEPLOY_KEY} —optimize —optimizer-runs 200 --with-gas-price 70000000000 --slow --broadcast

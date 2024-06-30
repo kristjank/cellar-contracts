@@ -9,13 +9,14 @@ contract TulipaContractDeploymentNames {
     string public CELLAR_NAME_NATIVE = "TULIPA_VAULT NATIVE CELLAR";
     //string public timelockOwnerName = "Timelock Owner V0.0";
 
-    // // Adaptors
+    //Adaptors
+    string public NATIVE_ADAPTOR_NAME = "Tulipa NATIVE Adaptor V0.1";
     string public AAVEV3_ATOKEN_ADAPTOR_NAME = "Tulipa Aave V3 AToken Adaptor V0.1";
     string public AAVEV3_DEBT_TOKEN_ADAPTOR_NAME = "Tulipa Aave V3 Debt Token Adaptor V0.1";
     string public ERC20_ADAPTOR_NAME = "Tulipa ERC20 Adaptor V1.0";
     string public UNISWAPV3_ADAPTOR_NAME = "Tulipa Uniswap V3 Adaptor V0.1";
     string public UNISWAPV3_POSITION_TRACKER_NAME = "Tulipa Uniswap V3 Position Tracker V0.1";
-    //string public SWAPWITHUNISWAPADAPTORNAME = "Sepolia Swap With Uniswap Adaptor V0.1";
+    string public SWAP_WITH_UNISWAP_ADAPTOR_NAME = "Tulipa Swap With Uniswap Adaptor V0.1";
     // string public erc4626AdaptorName = "ERC4626 Adaptor V0.0";
     // string public oneInchAdaptorName = "1Inch Adaptor V0.0";
     // string public zeroXAdaptorName = "0x Adaptor V0.0";

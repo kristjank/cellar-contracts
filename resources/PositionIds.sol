@@ -49,4 +49,6 @@ contract PositionIds {
     uint32 public constant UNISWAP_V3_WSTETH_RETH_POSITION = 45;
     uint32 public constant COMPOUND_V3_SUPPLY_USDC_POSITION = 46;
     uint32 public constant COMPOUND_V3_SUPPLY_USDCE_POSITION = 47;
+    uint32 public constant NATIVE_WETH_POSITION = 48;
+    uint32 public constant NATIVE_POSITION = 49;
 }

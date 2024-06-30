@@ -10,6 +10,10 @@ import {SequencerPriceRouter} from "src/modules/price-router/permutations/Sequen
 import {MainnetAddresses} from "test/resources/MainnetAddresses.sol";
 import {TulipaContractDeploymentNames} from "resources/TulipaContractDeploymentNames.sol";
 
+import {BaseAdaptor} from "src/modules/adaptors/BaseAdaptor.sol";
+import {ERC20Adaptor} from "src/modules/adaptors/ERC20Adaptor.sol";
+import {SwapWithUniswapAdaptor} from "src/modules/adaptors/Uniswap/SwapWithUniswapAdaptor.sol";
+
 import {NativeAdaptor} from "src/modules/adaptors/NativeAdaptor.sol";
 import {CellarWithNativeSupport} from "src/base/permutations/CellarWithNativeSupport.sol";
 
@@ -35,9 +39,12 @@ contract SetupCellarNativeSupportScript is Script, MainnetAddresses, TulipaContr
 
     CellarWithNativeSupport private cellar;
     NativeAdaptor private nativeAdaptor;
+    ERC20Adaptor public erc20Adaptor;
+    SwapWithUniswapAdaptor public swapWithUniswapAdaptor;
 
-    uint32 private wethPosition = 1;
-    uint32 private nativePosition = 2;
+    uint8 public constant CHAINLINK_DERIVATIVE = 1;
+    uint8 public constant TWAP_DERIVATIVE = 2;
+    uint8 public constant EXTENSION_DERIVATIVE = 3;
 
     function setUp() external {
         privateKey = vm.envUint("PRIVATE_KEY");
@@ -45,6 +52,8 @@ contract SetupCellarNativeSupportScript is Script, MainnetAddresses, TulipaContr
         deployer = Deployer(vm.envAddress("DEPLOYER_ADDRESS"));
         registry = Registry(deployer.getAddress(REGISTRY_NAME));
         priceRouter = PriceRouter(deployer.getAddress(PRICE_ROUTER_NAME));
+        erc20Adaptor = ERC20Adaptor(deployer.getAddress(ERC20_ADAPTOR_NAME));
+        nativeAdaptor = NativeAdaptor(deployer.getAddress(NATIVE_ADAPTOR_NAME));
     }
 
     function run() external {
@@ -53,26 +62,17 @@ contract SetupCellarNativeSupportScript is Script, MainnetAddresses, TulipaContr
 
         vm.startBroadcast(privateKey);
 
-        nativeAdaptor = new NativeAdaptor(address(WETH));
-
-        // Setup Cellar:
-        registry.trustAdaptor(address(nativeAdaptor));
-        registry.trustPosition(wethPosition, address(nativeAdaptor), abi.encode(WETH));
-        registry.trustPosition(nativePosition, address(nativeAdaptor), hex"");
-
         uint256 initialDeposit = 0.01e18;
         uint64 platformCut = 0.75e18;
 
         cellar = _createCellarWithNativeSupport(
-            CELLAR_NAME_NATIVE, WETH, wethPosition, abi.encode(true), initialDeposit, platformCut
+            CELLAR_NAME_NATIVE, WETH, NATIVE_WETH_POSITION, abi.encode(true), initialDeposit, platformCut
         );
 
-        cellar.addPositionToCatalogue(nativePosition);
+        cellar.addPositionToCatalogue(NATIVE_POSITION);
         cellar.addAdaptorToCatalogue(address(nativeAdaptor));
 
-        cellar.addPosition(1, nativePosition, abi.encode(0), false);
-
-        cellar.setRebalanceDeviation(0.01e18);
+        cellar.addPosition(1, NATIVE_POSITION, abi.encode(0), false);
 
         WETH.safeApprove(address(cellar), type(uint256).max);
 

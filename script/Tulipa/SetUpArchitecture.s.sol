@@ -6,6 +6,7 @@ import {Registry} from "src/Registry.sol";
 import {PriceRouter} from "src/modules/price-router/PriceRouter.sol";
 import {SequencerPriceRouter} from "src/modules/price-router/permutations/SequencerPriceRouter.sol";
 import {ERC20Adaptor} from "src/modules/adaptors/ERC20Adaptor.sol";
+import {NativeAdaptor} from "src/modules/adaptors/NativeAdaptor.sol";
 import {SwapWithUniswapAdaptor} from "src/modules/adaptors/Uniswap/SwapWithUniswapAdaptor.sol";
 import {UniswapV3PositionTracker} from "src/modules/adaptors/Uniswap/UniswapV3PositionTracker.sol";
 import {UniswapV3Adaptor} from "src/modules/adaptors/Uniswap/UniswapV3Adaptor.sol";
@@ -39,8 +40,10 @@ contract SetUpArchitectureScript is Script, MainnetAddresses, TulipaContractDepl
     Registry public registry;
     PriceRouter public priceRouter;
     address public erc20Adaptor;
+    address public nativeAdaptor;
     address public aaveV3ATokenAdaptor;
     address public aaveV3DebtTokenAdaptor;
+    address public swapWithUniswapAdaptor;
     address public uniswapV3Adaptor;
 
     uint256 public constant AAVE_V3_MIN_HEALTH_FACTOR = 1.01e18;
@@ -66,6 +69,11 @@ contract SetUpArchitectureScript is Script, MainnetAddresses, TulipaContractDepl
 
         vm.startBroadcast(privateKey);
 
+        // Deploy NativeAdaptor.
+        creationCode = type(NativeAdaptor).creationCode;
+        constructorArgs = abi.encode(address(WETH));
+        nativeAdaptor = deployer.deployContract(NATIVE_ADAPTOR_NAME, creationCode, constructorArgs, 0);
+
         // Deploy ERC20Adaptor.
         creationCode = type(ERC20Adaptor).creationCode;
         constructorArgs = hex"";
@@ -90,11 +98,19 @@ contract SetUpArchitectureScript is Script, MainnetAddresses, TulipaContractDepl
         aaveV3DebtTokenAdaptor =
             deployer.deployContract(AAVEV3_DEBT_TOKEN_ADAPTOR_NAME, creationCode, constructorArgs, 0);
 
+        // Deploy SwapWithUniswapAdaptor.
+        creationCode = type(SwapWithUniswapAdaptor).creationCode;
+        constructorArgs = abi.encode(uniV2Router, uniV3Router);
+        swapWithUniswapAdaptor =
+            deployer.deployContract(SWAP_WITH_UNISWAP_ADAPTOR_NAME, creationCode, constructorArgs, 0);
+
         // Trust Adaptors in Registry.
         registry.trustAdaptor(erc20Adaptor);
+        registry.trustAdaptor(swapWithUniswapAdaptor);
         registry.trustAdaptor(aaveV3ATokenAdaptor);
         registry.trustAdaptor(aaveV3DebtTokenAdaptor);
         registry.trustAdaptor(uniswapV3Adaptor);
+        registry.trustAdaptor(nativeAdaptor);
 
         // Add pricing.
         PriceRouter.ChainlinkDerivativeStorage memory stor;
@@ -119,9 +135,11 @@ contract SetUpArchitectureScript is Script, MainnetAddresses, TulipaContractDepl
         stor.inETH = true;
 
         // Add ERC20 positions
+        registry.trustPosition(NATIVE_WETH_POSITION, address(erc20Adaptor), abi.encode(WETH));
+        registry.trustPosition(NATIVE_POSITION, address(nativeAdaptor), hex"");
+
         registry.trustPosition(ERC20_USDC_POSITION, address(erc20Adaptor), abi.encode(USDC));
         registry.trustPosition(ERC20_DAI_POSITION, address(erc20Adaptor), abi.encode(DAI));
-        registry.trustPosition(ERC20_WETH_POSITION, address(erc20Adaptor), abi.encode(WETH));
 
         // // Add Aave V3 A token positions
         registry.trustPosition(AAVE_V3_LOW_HF_A_USDC_POSITION, address(aaveV3ATokenAdaptor), abi.encode(aV3USDC));
