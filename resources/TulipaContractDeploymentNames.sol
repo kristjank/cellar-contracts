@@ -5,7 +5,7 @@ contract TulipaContractDeploymentNames {
     // Infrastructure
     string public REGISTRY_NAME = "Tulipa-Register";
     string public PRICE_ROUTER_NAME = "Tulipa-Price-Router";
-    string public CELLAR_NAME = "TULIPA_VAULT";
+    string public CELLAR_NAME_AAVEV3 = "TULIPA_VAULT";
     string public CELLAR_NAME_NATIVE = "TULIPA_VAULT NATIVE CELLAR";
     //string public timelockOwnerName = "Timelock Owner V0.0";
 

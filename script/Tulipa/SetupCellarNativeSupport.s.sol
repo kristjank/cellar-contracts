@@ -74,7 +74,7 @@ contract SetupCellarNativeSupportScript is Script, MainnetAddresses, TulipaContr
 
         cellar.addPosition(1, NATIVE_POSITION, abi.encode(0), false);
 
-        WETH.safeApprove(address(cellar), type(uint256).max);
+        // WETH.safeApprove(address(cellar), type(uint256).max);
 
         //initialAssets = cellar.totalAssets();
 

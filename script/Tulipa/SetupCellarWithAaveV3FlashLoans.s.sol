@@ -64,10 +64,6 @@ contract SetupCellarWithAaveV3FlashLoansScript is
     IPoolV3 private pool = IPoolV3(0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2);
     address private aaveOracle = 0x54586bE62E3c3580375aE3723C145253060Ca0C2;
 
-    uint32 private usdcPosition = 1;
-    uint32 private aV3USDCPosition = 1_000_001;
-    uint32 private debtUSDCPosition = 1_000_002;
-
     function setUp() external {
         privateKey = vm.envUint("PRIVATE_KEY");
 
@@ -89,7 +85,7 @@ contract SetupCellarWithAaveV3FlashLoansScript is
         uint64 platformCut = 0.75e18;
 
         // Approve new cellar to spend assets.
-        address cellarAddress = deployer.getAddress(CELLAR_NAME);
+        address cellarAddress = deployer.getAddress(CELLAR_NAME_AAVEV3);
         //deal(address(USDC), address(this), initialDeposit);
         USDC.approve(cellarAddress, initialDeposit);
 
@@ -98,9 +94,9 @@ contract SetupCellarWithAaveV3FlashLoansScript is
             address(this),
             registry,
             USDC,
-            CELLAR_NAME,
-            CELLAR_NAME,
-            aV3USDCPosition,
+            CELLAR_NAME_AAVEV3,
+            "TULIP",
+            AAVE_V3_LOW_HF_A_USDC_POSITION,
             abi.encode(AAVE_V3_MIN_HEALTH_FACTOR),
             initialDeposit,
             platformCut,
@@ -108,16 +104,16 @@ contract SetupCellarWithAaveV3FlashLoansScript is
             address(pool)
         );
 
-        cellar = CellarWithAaveFlashLoans(deployer.deployContract(CELLAR_NAME, creationCode, constructorArgs, 0));
+        cellar = CellarWithAaveFlashLoans(deployer.deployContract(CELLAR_NAME_AAVEV3, creationCode, constructorArgs, 0));
 
         cellar.addAdaptorToCatalogue(aaveV3ATokenAdaptorAddress);
         cellar.addAdaptorToCatalogue(aaveV3DebtTokenAdaptorAddress);
 
-        cellar.addPositionToCatalogue(usdcPosition);
-        cellar.addPositionToCatalogue(debtUSDCPosition);
+        cellar.addPositionToCatalogue(AAVE_V3_LOW_HF_A_USDC_POSITION);
+        cellar.addPositionToCatalogue(AAVE_V3_LOW_HF_DEBT_USDC_POSITION);
 
-        cellar.addPosition(1, usdcPosition, abi.encode(0), false);
-        cellar.addPosition(0, debtUSDCPosition, abi.encode(0), true);
+        cellar.addPosition(1, AAVE_V3_LOW_HF_A_USDC_POSITION, abi.encode(0), false);
+        cellar.addPosition(0, AAVE_V3_LOW_HF_DEBT_USDC_POSITION, abi.encode(0), true);
 
         USDC.safeApprove(address(cellar), type(uint256).max);
 
