@@ -54,12 +54,10 @@ contract SetupCellarWithAaveV3FlashLoansScript is
     address public aaveV3ATokenAdaptorAddress;
     address public aaveV3DebtTokenAdaptorAddress;
     address public uniswapV3AdaptorAddress;
+    address public nativeAdaptorAddress;
+    address public swapWithUniswapAdaptorAddress;
 
     uint256 public constant AAVE_V3_MIN_HEALTH_FACTOR = 1.01e18;
-
-    uint8 public constant CHAINLINK_DERIVATIVE = 1;
-    uint8 public constant TWAP_DERIVATIVE = 2;
-    uint8 public constant EXTENSION_DERIVATIVE = 3;
 
     IPoolV3 private pool = IPoolV3(0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2);
     address private aaveOracle = 0x54586bE62E3c3580375aE3723C145253060Ca0C2;
@@ -71,6 +69,10 @@ contract SetupCellarWithAaveV3FlashLoansScript is
         registry = Registry(deployer.getAddress(REGISTRY_NAME));
         priceRouter = PriceRouter(deployer.getAddress(PRICE_ROUTER_NAME));
 
+        erc20AdaptorAddress = deployer.getAddress(ERC20_ADAPTOR_NAME);
+        uniswapV3AdaptorAddress = deployer.getAddress(UNISWAPV3_ADAPTOR_NAME);
+        nativeAdaptorAddress = deployer.getAddress(NATIVE_ADAPTOR_NAME);
+        swapWithUniswapAdaptorAddress = deployer.getAddress(SWAP_WITH_UNISWAP_ADAPTOR_NAME);
         aaveV3ATokenAdaptorAddress = deployer.getAddress(AAVEV3_ATOKEN_ADAPTOR_NAME);
         aaveV3DebtTokenAdaptorAddress = deployer.getAddress(AAVEV3_DEBT_TOKEN_ADAPTOR_NAME);
     }
@@ -81,12 +83,11 @@ contract SetupCellarWithAaveV3FlashLoansScript is
 
         vm.startBroadcast(privateKey);
 
-        uint256 initialDeposit = 1e6;
-        uint64 platformCut = 0.75e18;
+        uint256 initialDeposit = 0.1e8;
+        uint64 platformCut = 0.8e18;
 
         // Approve new cellar to spend assets.
         address cellarAddress = deployer.getAddress(CELLAR_NAME_AAVEV3);
-        //deal(address(USDC), address(this), initialDeposit);
         USDC.approve(cellarAddress, initialDeposit);
 
         creationCode = type(CellarWithAaveFlashLoans).creationCode;
@@ -98,7 +99,7 @@ contract SetupCellarWithAaveV3FlashLoansScript is
             "TULIP",
             AAVE_V3_LOW_HF_A_USDC_POSITION,
             abi.encode(AAVE_V3_MIN_HEALTH_FACTOR),
-            initialDeposit,
+            0.1e6,
             platformCut,
             type(uint192).max,
             address(pool)
@@ -108,6 +109,16 @@ contract SetupCellarWithAaveV3FlashLoansScript is
 
         cellar.addAdaptorToCatalogue(aaveV3ATokenAdaptorAddress);
         cellar.addAdaptorToCatalogue(aaveV3DebtTokenAdaptorAddress);
+
+        cellar.addAdaptorToCatalogue(nativeAdaptorAddress);
+        cellar.addAdaptorToCatalogue(erc20AdaptorAddress);
+        cellar.addAdaptorToCatalogue(swapWithUniswapAdaptorAddress);
+        cellar.addAdaptorToCatalogue(uniswapV3AdaptorAddress);
+
+        cellar.addPositionToCatalogue(ERC20_WETH_POSITION);
+        cellar.addPositionToCatalogue(ERC20_USDC_POSITION);
+        cellar.addPositionToCatalogue(ERC20_DAI_POSITION);
+        cellar.addPositionToCatalogue(UNISWAP_V3_USDC_DAI_POSITION);
 
         cellar.addPositionToCatalogue(AAVE_V3_LOW_HF_A_USDC_POSITION);
         cellar.addPositionToCatalogue(AAVE_V3_LOW_HF_DEBT_USDC_POSITION);

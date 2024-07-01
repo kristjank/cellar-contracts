@@ -12,6 +12,7 @@ import {TulipaContractDeploymentNames} from "resources/TulipaContractDeploymentN
 
 import {BaseAdaptor} from "src/modules/adaptors/BaseAdaptor.sol";
 import {ERC20Adaptor} from "src/modules/adaptors/ERC20Adaptor.sol";
+import {UniswapV3Adaptor} from "src/modules/adaptors/Uniswap/UniswapV3Adaptor.sol";
 import {SwapWithUniswapAdaptor} from "src/modules/adaptors/Uniswap/SwapWithUniswapAdaptor.sol";
 
 import {NativeAdaptor} from "src/modules/adaptors/NativeAdaptor.sol";
@@ -41,6 +42,7 @@ contract SetupCellarNativeSupportScript is Script, MainnetAddresses, TulipaContr
     NativeAdaptor private nativeAdaptor;
     ERC20Adaptor public erc20Adaptor;
     SwapWithUniswapAdaptor public swapWithUniswapAdaptor;
+    UniswapV3Adaptor public uniswapV3Adaptor;
 
     uint8 public constant CHAINLINK_DERIVATIVE = 1;
     uint8 public constant TWAP_DERIVATIVE = 2;
@@ -54,25 +56,31 @@ contract SetupCellarNativeSupportScript is Script, MainnetAddresses, TulipaContr
         priceRouter = PriceRouter(deployer.getAddress(PRICE_ROUTER_NAME));
         erc20Adaptor = ERC20Adaptor(deployer.getAddress(ERC20_ADAPTOR_NAME));
         nativeAdaptor = NativeAdaptor(deployer.getAddress(NATIVE_ADAPTOR_NAME));
+        uniswapV3Adaptor = UniswapV3Adaptor(deployer.getAddress(UNISWAPV3_ADAPTOR_NAME));
+        swapWithUniswapAdaptor = SwapWithUniswapAdaptor(deployer.getAddress(SWAP_WITH_UNISWAP_ADAPTOR_NAME));
     }
 
     function run() external {
-        bytes memory creationCode;
-        bytes memory constructorArgs;
-
         vm.startBroadcast(privateKey);
 
-        uint256 initialDeposit = 1e8;
-        uint64 platformCut = 0.75e18;
+        uint256 initialDeposit = 0.1e6;
+        uint64 platformCut = 0.8e18;
 
         cellar = _createCellarWithNativeSupport(
-            CELLAR_NAME_NATIVE, WETH, NATIVE_WETH_POSITION, abi.encode(true), initialDeposit, platformCut
+            CELLAR_NAME_NATIVE, WETH, ERC20_WETH_POSITION, abi.encode(true), initialDeposit, platformCut
         );
 
-        cellar.addPositionToCatalogue(NATIVE_POSITION);
         cellar.addAdaptorToCatalogue(address(nativeAdaptor));
+        cellar.addAdaptorToCatalogue(address(erc20Adaptor));
+        cellar.addAdaptorToCatalogue(address(swapWithUniswapAdaptor));
+        cellar.addAdaptorToCatalogue(address(uniswapV3Adaptor));
 
-        cellar.addPosition(1, NATIVE_POSITION, abi.encode(0), false);
+        cellar.addPositionToCatalogue(ERC20_WETH_POSITION);
+        cellar.addPositionToCatalogue(ERC20_USDC_POSITION);
+        cellar.addPositionToCatalogue(ERC20_DAI_POSITION);
+        cellar.addPositionToCatalogue(UNISWAP_V3_USDC_DAI_POSITION);
+
+        //cellar.addPosition(1, NATIVE_POSITION, abi.encode(0), false);
 
         WETH.safeApprove(address(cellar), type(uint256).max);
 
@@ -89,8 +97,6 @@ contract SetupCellarNativeSupportScript is Script, MainnetAddresses, TulipaContr
     ) internal returns (CellarWithNativeSupport) {
         // Approve new cellar to spend assets.
         address cellarAddress = deployer.getAddress(cellarName);
-
-        // vm.deal(address(holdingAsset), address(this), initialDeposit);
         holdingAsset.approve(cellarAddress, initialDeposit);
 
         bytes memory creationCode;
