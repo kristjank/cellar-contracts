@@ -62,7 +62,7 @@ contract SetupCellarNativeSupportScript is Script, MainnetAddresses, TulipaContr
 
         vm.startBroadcast(privateKey);
 
-        uint256 initialDeposit = 0.01e18;
+        uint256 initialDeposit = 1e8;
         uint64 platformCut = 0.75e18;
 
         cellar = _createCellarWithNativeSupport(
@@ -74,9 +74,7 @@ contract SetupCellarNativeSupportScript is Script, MainnetAddresses, TulipaContr
 
         cellar.addPosition(1, NATIVE_POSITION, abi.encode(0), false);
 
-        // WETH.safeApprove(address(cellar), type(uint256).max);
-
-        //initialAssets = cellar.totalAssets();
+        WETH.safeApprove(address(cellar), type(uint256).max);
 
         vm.stopBroadcast();
     }
@@ -91,7 +89,8 @@ contract SetupCellarNativeSupportScript is Script, MainnetAddresses, TulipaContr
     ) internal returns (CellarWithNativeSupport) {
         // Approve new cellar to spend assets.
         address cellarAddress = deployer.getAddress(cellarName);
-        //deal(address(holdingAsset), address(this), initialDeposit);
+
+        // vm.deal(address(holdingAsset), address(this), initialDeposit);
         holdingAsset.approve(cellarAddress, initialDeposit);
 
         bytes memory creationCode;
